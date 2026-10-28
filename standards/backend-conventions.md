@@ -2,9 +2,11 @@
 
 ## Status
 
-**Confirmed:** `tutor-backend` is a layered Spring Boot backend with Controller, Service, Repository, Entity, DTO, Mapper, Security, Exception, Config, and Util areas.
+**Confirmed:** `tutor-backend` uses Spring Boot 4.1.1, Java 21, and Maven. The Maven Wrapper is configured for Maven 3.10.0, and the base Java package is `com.tutormarketplace`.
 
-The presence of Repository and Entity areas does not mean a database, schema, or persistence implementation exists. Database work is **TBD / Not implemented**.
+The repository uses a layered scaffold with Controller, Service, Repository, Entity, DTO, Mapper, Security, Exception, Config, and Util areas. Some of these areas are placeholders and must not be described as implemented behavior until corresponding source code exists.
+
+The backend is connected to Supabase PostgreSQL, and Spring Data JPA plus Flyway are configured. The presence of Repository and Entity areas does not mean the official MVP schema or persistence model has already been defined; that work belongs to the next planned schema ticket.
 
 ## Layer responsibilities
 
@@ -12,8 +14,8 @@ The presence of Repository and Entity areas does not mean a database, schema, or
 | --- | --- |
 | Controller | HTTP boundary |
 | Service | Application/service logic |
-| Repository | Repository concern; persistence behavior is **TBD** |
-| Entity | Entity concern; database mapping is **TBD** |
+| Repository | Repository concern; MVP persistence behavior awaits the official schema ticket |
+| Entity | Entity concern; official database mappings have not yet been defined |
 | DTO | Boundary data transfer |
 | Mapper | Representation mapping |
 | Security | Cross-cutting security concerns |
@@ -21,20 +23,21 @@ The presence of Repository and Entity areas does not mean a database, schema, or
 | Config | Configuration |
 | Util | Shared utility code |
 
-This table does not define exact package names or a strict dependency policy.
+The confirmed base package is `com.tutormarketplace`. This table does not yet define subpackage naming rules or a strict dependency policy.
 
 ## Working rules
 
 - Preserve the documented layered structure unless an accepted decision changes it.
 - Verify current naming, package layout, and framework usage in `tutor-backend` before modifying code.
+- Use the repository Maven Wrapper for project builds unless an accepted convention explicitly changes the build workflow.
 - Do not place an unconfirmed business rule into code based only on a domain label.
 - Update this KB when a new convention becomes accepted.
 
 ## To be defined
 
-- Java and Spring Boot versions
-- Build tool and commands
-- Package and naming conventions
+- Supported upgrade policy for Java, Spring Boot, Maven, and dependencies
+- Standard build, test, and local-run commands
+- Subpackage and symbol naming conventions
 - Dependency-direction rules
 - DTO/entity exposure policy
 - Mapping approach

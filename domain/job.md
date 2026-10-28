@@ -2,9 +2,9 @@
 
 ## Status
 
-**Planned product domain:** Job postings are part of the intended product scope.
+**Post-MVP product domain:** Job postings are explicitly outside the MVP.
 
-No job-posting feature implementation is confirmed by this page.
+No job-posting feature implementation is confirmed by this page. MVP implementation must not depend on a Job entity or job-posting workflow.
 
 ## Scope
 
@@ -27,5 +27,5 @@ No job state machine or field schema is currently documented.
 - [User](user.md)
 - [Tutor](tutor.md)
 - [Application](application.md)
-- Sessions — domain documentation **TBD**
+- [Tutor connection and learning history](session.md)
 

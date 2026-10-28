@@ -12,10 +12,11 @@ Do not assume framework defaults are accepted project standards. Verify the curr
 | --- | --- |
 | Backend | Unit, integration, repository, API, and security testing approach |
 | Frontend | Unit, component, SSR/SSG, accessibility, and end-to-end testing approach |
-| Database | Testing approach after database design and initialization are defined |
+| Database | Migration, schema, repository, and integration testing approach to be defined with the planned MVP schema ticket |
 | API | Contract and compatibility testing |
 | Payments | Provider sandbox and failure-path testing |
 | AI matching | Evaluation data, quality measures, and regression testing |
+| AI CV review | Contact-data detection, obfuscation, OCR/QR extraction, false positives, fail-safe behavior, and sanitized-copy review |
 | CI | Required checks and merge gates |
 | Coverage | Measurement tools and thresholds |
 

@@ -8,15 +8,15 @@ This repository contains documentation only. Application code belongs in the fro
 
 | Repository / system | Responsibility | Current state |
 | --- | --- | --- |
-| `tutor-frontend` | Angular 22 client using TypeScript, SCSS, and SSR/SSG | Repository initialized |
-| `tutor-backend` | Spring Boot service | Repository initialized |
+| `tutor-frontend` | Angular 22.2.2 client using TypeScript 6.0.3, SCSS, hydration, and prerendering | Baseline shell, health check, and auth infrastructure scaffold implemented |
+| `tutor-backend` | Spring Boot 4.1.1 service using Java 21 and Maven | Repository initialized; baseline health and security configuration implemented |
 | `tutor-kb` | Architecture, domain knowledge, and project rules | Active; this repository |
-| Database | Future persistence layer | **TBD / Not implemented** |
+| Database | Supabase PostgreSQL | Connected; official MVP schema not yet defined |
 | Jira | Future ticket and workflow system | Planned to be configured next |
 | MCP integrations | Future agent integrations | Not configured |
 | `tutor-agent` | Future Planner, Developer, and Reviewer agents | Not configured |
 
-The local frontend and backend are confirmed to communicate successfully over REST/HTTP. No database has been designed, created, or initialized.
+The local frontend and backend are confirmed to communicate successfully over REST/HTTP. The backend is also connected to Supabase PostgreSQL. The official application schema required for the MVP has not yet been designed or created.
 
 ## How context is divided
 
@@ -47,22 +47,25 @@ Unmarked detail must not be treated as an approved requirement.
 
 | Area | Contents |
 | --- | --- |
+| [`product/`](product/scope.md) | Confirmed market, customers, learning modes, MVP scope, and monetization |
 | [`architecture/`](architecture/system-overview.md) | System boundaries and frontend/backend structure |
 | [`domain/`](domain/user.md) | Domain vocabulary and known boundaries |
 | [`api/`](api/conventions.md) | API and error-contract conventions |
-| [`database/`](database/schema.md) | Database status now; schema source of truth after future database work |
+| [`database/`](database/schema.md) | Current database connection status; schema source of truth after the planned MVP schema ticket |
 | [`standards/`](standards/backend-conventions.md) | Engineering and collaboration conventions |
 | [`decisions/`](decisions/README.md) | Architecture Decision Records (ADRs) |
 
 ## Product scope
 
-Tutor Marketplace is intended to connect:
+**Confirmed:** Tutor Marketplace serves the Vietnamese market only and supports both online and in-person tutoring.
 
-- Students / Parents
-- Tutors
-- Administrators
+The product has two separate, mutually exclusive customer account types: Tutor and Tutor Seeker. There is no separate Parent role; students may register directly as Tutor Seekers. The confirmed MVP includes authentication, approved Tutor profiles, tutor discovery, AI recommendations, free connection requests, contact unlock after acceptance, connection history, and reviews from connected Tutor Seekers. These are product requirements, not claims of current implementation.
 
-Planned product domains are users, tutor profiles, job postings, tutor discovery, applications, sessions, payments, reviews, and AI-assisted tutor matching. Listing a domain does not mean the feature is implemented. Detailed behavior and implementation status remain `TBD` unless a domain document says otherwise.
+See [Product Scope](product/scope.md) for the confirmed scope and unresolved details.
+
+Registration and connections are free in the MVP. Connection credits are planned for a later release and have no confirmed price. See [Monetization](product/monetization.md).
+
+Job postings, lesson booking/session management, tutoring-fee payments, and paid connection credits are explicitly post-MVP. Detailed behavior and implementation status remain `TBD` unless a domain document says otherwise.
 
 ## Current architecture
 
@@ -72,19 +75,27 @@ Angular Frontend
        | REST/HTTP
        v
 Spring Boot Backend
+       |
+       | JDBC
+       v
+Supabase PostgreSQL
 
-Database: TBD / Not implemented
+Official MVP schema: Not yet defined
 ```
 
 See [System Overview](architecture/system-overview.md) for current and planned architecture boundaries.
 
-## First planned development ticket
+The confirmed CV-publication workflow uses AI for pre-validation and an administrator for final approval. See [AI-Assisted CV Review](architecture/ai-cv-review.md).
 
-The first planned development ticket is **Database Design & Initial Setup**.
+## Next planned development ticket
+
+After the current KB grooming is completed, the next planned development ticket is **MVP Database Schema Design & Creation**.
 
 - This is roadmap information only.
-- The ticket will define its requirements and acceptance criteria later.
-- No database technology, schema, configuration, or implementation is defined by this KB update.
+- Supabase PostgreSQL is already selected, configured, and connected to the backend.
+- The ticket will define and create the official database schema required to build the MVP.
+- The ticket will define its detailed requirements and acceptance criteria before implementation begins.
+- After the ticket is completed and verified, update this KB with the accepted and implemented schema.
 
 ## How to use this KB
 

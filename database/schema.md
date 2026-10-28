@@ -2,33 +2,38 @@
 
 ## Status
 
-**TBD / Not implemented**
+**Database connected / Official MVP schema not yet defined**
 
-The database schema has not been designed yet.
+The backend is connected to Supabase PostgreSQL. Spring Data JPA, the PostgreSQL driver, and Flyway are configured in `tutor-backend`.
 
-Database design and initialization will be performed through a future Jira ticket.
+The official application schema required to build the MVP has not yet been designed or created. No approved schema details or MVP Flyway migrations are recorded in this KB.
 
-This document will become the source of truth for the database schema after that ticket is completed.
+After the current KB grooming is completed, a dedicated development ticket will define and create the official MVP schema. This document will become the schema source of truth after that ticket is completed and verified.
 
 ## Current confirmed state
 
-- No database has been designed, created, or initialized.
-- No database implementation or backend connection is confirmed.
-- No schema details exist in this KB.
+- Supabase PostgreSQL is the confirmed database technology.
+- The backend datasource connection is configured and has been connected successfully.
+- Flyway is configured to manage database migrations.
+- No official application schema has been approved or documented yet.
+- No MVP tables, relationships, constraints, indexes, or seed/reference data are defined by this KB.
+- No approved MVP Flyway migration is present yet.
 - Jira is not configured yet.
 
-## Planned work
+## Next planned work
 
-The first planned development ticket is **Database Design & Initial Setup**.
+After the current KB grooming is completed, the next planned development ticket is **MVP Database Schema Design & Creation**.
 
 - This is roadmap information only.
-- The ticket will define its requirements and acceptance criteria later.
-- The ticket will determine the database design and initialization approach.
-- This task does not make or record those design decisions.
+- The ticket will define its detailed requirements and acceptance criteria before implementation begins.
+- The ticket will design and create the schema required to build the confirmed MVP scope.
+- The ticket will define application tables, relationships, constraints, indexes, migration ordering, and any required seed/reference data.
+- The ticket will implement the accepted schema through versioned Flyway migrations.
+- The current KB grooming does not make or record those schema-design decisions.
 
-PostgreSQL and Supabase have been mentioned as possible future technology. Their selection, configuration, and implementation status are **Planned / TBD** and must not be treated as confirmed.
+After the schema ticket is completed and verified, update this page and all affected architecture, domain, API, and engineering documents with the accepted and implemented state.
 
 ## Documentation rule
 
-Do not add database design or implementation claims before the future ticket establishes and verifies them. After that ticket is completed, update this page to reflect only the accepted and implemented state.
+Do not treat proposed tables or relationships as implemented before the schema ticket establishes and verifies them. Until then, distinguish the confirmed database connection from the still-pending official application schema. After the ticket is completed, update this page to reflect only the accepted and implemented state.
 
