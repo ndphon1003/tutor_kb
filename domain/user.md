@@ -6,6 +6,8 @@
 
 No user feature implementation or business rule is confirmed by this page.
 
+**TUTOR-4 identity decision:** Application-managed authentication uses one shared `app_user` identity with one Java-defined role: `TUTOR`, `TUTOR_SEEKER`, or `ADMIN`. Customer profiles are separate and mutually exclusive; administrators use the shared identity without a customer profile. Normalized username and email are unique. These decisions are implemented as local migration structures; live deployment and authentication services remain pending. See [Database schema](../database/schema.md), which supersedes the identity-model TBDs below.
+
 ## Known vocabulary
 
 | Term | Confirmed meaning |

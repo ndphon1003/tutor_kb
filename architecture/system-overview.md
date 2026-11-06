@@ -4,6 +4,8 @@
 
 This document separates the current confirmed system from future or TBD work.
 
+**TUTOR-4 update:** The official schema foundation now exists as four locally verified Flyway migrations. Application roles share one identity, with separate Tutor/Tutor Seeker profiles and ADMIN support. Supabase deployment is still unverified. References below to schema design as future work describe the earlier baseline; [Database schema](../database/schema.md) records the current persistence state and AI-review deferral.
+
 ## Current architecture
 
 ```mermaid

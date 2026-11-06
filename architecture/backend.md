@@ -10,6 +10,8 @@ The Maven Wrapper is configured to use Maven 3.10.0. Versions recorded here desc
 
 ## Repository
 
+**TUTOR-4 update:** Four local Flyway migrations, backend enum definitions and real PostgreSQL verification tests now implement the persistence foundation. Live Supabase deployment and feature services remain pending. This update supersedes the older schema-pending baseline descriptions on this page; see [Database schema](../database/schema.md) for the migration chain, permissions and remaining responsibilities.
+
 `tutor-backend`
 
 ## Current implementation baseline

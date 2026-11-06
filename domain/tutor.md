@@ -6,6 +6,8 @@
 
 No tutor profile or discovery feature implementation is confirmed by this page.
 
+**TUTOR-4 foundation:** Local migrations now represent profile data, VND-per-hour rate ranges, recurring weekly availability, CV versions and manual administrator approval. AI review persistence is deferred. The foundation uses `DRAFT`, `PENDING_ADMIN_REVIEW`, `APPROVED`, `REJECTED`, `SUSPENDED`, with submission/re-review moving directly to administrator review. The eventual AI lifecycle below remains future integration work. See [Database schema](../database/schema.md) for the implemented persistence boundary; live deployment and feature services are pending.
+
 ## Scope
 
 This page is the future source of truth for tutor-specific concepts. It does not yet define a profile schema or discovery behavior.

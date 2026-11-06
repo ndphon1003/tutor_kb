@@ -6,6 +6,8 @@
 
 No review feature implementation is confirmed by this page.
 
+**TUTOR-4 decisions:** Valid reviews publish immediately, including edits. Rating summaries use the arithmetic mean and count of stored reviews, with an absent average when no reviews exist; display rounding is deferred. Local migrations enforce integer stars and one review per pair, with a matching accepted-connection reference. Feature authorization/publication services and live deployment remain pending. See [Database schema](../database/schema.md).
+
 ## Scope
 
 The review author is a Tutor Seeker and the review subject is a Tutor. A Tutor Seeker becomes eligible after a connection request reaches `ACCEPTED`.
@@ -35,7 +37,7 @@ Published ratings are displayed on Tutor list and detail views and can be used a
 - Aggregation and display rules
 - Abuse prevention and audit requirements
 
-No rating aggregation formula or moderation rule is currently documented.
+The TUTOR-4 mean/count and immediate-publication decisions above supersede the former aggregation/visibility TBDs. Deletion, responses, reporting and later moderation behavior remain unresolved.
 
 ## Related domains
 
