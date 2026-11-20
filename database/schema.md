@@ -4,7 +4,9 @@
 
 **TUTOR-4 migrations implemented in local backend source and verified on PostgreSQL 17. Live Supabase deployment is not yet verified.**
 
-The accepted design is recorded in [TUTOR-4](https://nguyenphon1003.atlassian.net/browse/TUTOR-4?focusedCommentId=10002). These migrations establish persistence; authentication, authorization, approval, discovery and connection feature services remain subsequent work.
+The accepted design is recorded in [TUTOR-4](https://nguyenphon1003.atlassian.net/browse/TUTOR-4?focusedCommentId=10002). TUTOR-5 now implements [authentication](../api/authentication.md) against this foundation without changing the migrations. Approval, discovery and connection feature services remain subsequent work.
+
+The [Confluence Database Schema Version 01](https://nguyenphon1003.atlassian.net/wiki/spaces/TUTOR/pages/950277/Tutor+Marketplace+Database+Schema+Version+01) confirms table relationships, shared user/profile/credential keys, generated unique identity normalization and string-valued Java enums. TUTOR-5's JPA mappings cover the five identity/credential/session/customer-profile tables it uses; deferred feature tables remain defined by Flyway.
 
 ## Migration chain
 
@@ -24,9 +26,9 @@ Paths are under `tutor_backend/src/main/resources/db/migration/`. Applied migrat
 - `app_user`: UUID identity; username/email and generated unique normalized keys using `lower(btrim(...))`; one textual role; email-verification and audit timestamps.
 - `password_credential`: user PK/FK, password hash and password-change time.
 - `email_otp_challenge`: user/purpose composite PK, protected OTP verifier, issue/expiry/resend times, attempts, consumed/invalidated and block timestamps. Replacement retains blocking state in the same row.
-- `auth_session`: user FK, unique hashed session identifier, issue/expiry/revocation timestamps.
+- `auth_session`: stable UUID session identifier, user FK, unique SHA-256 refresh-token hash in `session_token_hash`, issue/absolute-expiry/revocation timestamps. Rotation changes only the hash; the original seven-day deadline never slides.
 
-Authentication is application-managed. There is no Supabase Auth dependency or separate administrator identity table. Java roles are `TUTOR`, `TUTOR_SEEKER`, `ADMIN`. The backend must enforce role/profile compatibility, prevent dual customer profiles and public ADMIN registration, enforce activation/password/OTP rules, and consult revocation state. Those feature services are not delivered by the migrations. Never store plaintext passwords, OTPs or session tokens.
+Authentication is application-managed. There is no Supabase Auth dependency or separate administrator identity table. Java roles are `TUTOR`, `TUTOR_SEEKER`, `ADMIN`. TUTOR-5 enforces compatible profiles, normalized uniqueness, password policy, API-only key-protected ADMIN registration, local-only unverified sign-in and persistent session/revocation checks. OTP functionality remains deferred. JPA entities use shared-key `@MapsId` relationships for credentials/profiles, a lazy user relationship for sessions, and read-only mappings for generated normalization/audit fields. JPA service transactions lock and refresh the user before session mutation; migrations supply the underlying constraints/privileges. Never store plaintext passwords, OTPs or session tokens.
 
 ## Profiles and discovery
 
@@ -73,9 +75,9 @@ PUBLIC and standard Supabase API roles receive no application-schema access. Kee
 
 ## Verification and deployment boundary
 
-The backend's `scripts/verify-migrations.ps1` starts a fresh loopback PostgreSQL 17 cluster, uses real Flyway/JDBC tests and stops the server afterward. Ignored logs/data are retained under `target`.
+The backend's `scripts/verify-migrations.ps1` starts a fresh loopback PostgreSQL 17 cluster, runs independent Flyway/JDBC migration tests plus JPA/HTTP authentication integration tests, and stops the server afterward. Ignored cluster logs/data are retained under `.verification/`, outside Maven's `target/` so clean builds can run safely.
 
-Verification passed all 17 tests (16 database integration tests plus the existing health test). Checks cover clean migration, simulated Supabase roles, valid checksums/no pending versions, repeat application, enum string persistence, relational/numeric/time constraints, concurrent pending/connection uniqueness, pair-consistent reviews and runtime privileges. These persistence tests do not establish correctness of unimplemented feature services.
+The current clean backend verification passed all 44 tests with zero skips: 16 independent migration tests, 13 JPA/HTTP authentication integration tests, 5 authentication-configuration tests, 9 coverage-gate tests and the health test. Checks cover migration history/constraints/privileges, mapped shared keys/generated columns, registration rollback, JWT/session behavior, concurrent rotation/revocation and stale JPA persistence-context refresh. Changed executable Java line coverage is 98.99% for the current TUTOR-5 working tree. These tests do not establish correctness of unimplemented feature services or live deployment.
 
 See `tutor_backend/docs/database-migrations.md` for the procedure and deployment preflight. Before live application, inspect existing schemas/history (including `public.database_change_log`), verify migration-owner permissions, provision runtime membership, approve catalog seed data and verify in an isolated Supabase project. No live Supabase deployment or reference seeding has been performed.
 

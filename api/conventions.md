@@ -4,7 +4,7 @@
 
 **Confirmed:** The Angular frontend and Spring Boot backend communicate through REST/HTTP.
 
-The current implementation uses `/api` as its API base path. No version segment is configured. Only the health endpoint documented below is currently implemented and verified from source.
+The implementation uses `/api` with no version segment. The health endpoint below and [TUTOR-5 authentication operations](authentication.md) are implemented in local source. Live deployment and browser acceptance checks remain pending.
 
 ## Confirmed boundary
 
@@ -45,12 +45,11 @@ This endpoint confirms process responsiveness only. It does not currently verify
 
 ## Current security and CORS baseline
 
-- The backend security configuration is stateless and permits all `OPTIONS` requests.
-- `GET /api/health` is public; the security configuration marks every other request as requiring authentication.
-- The frontend auth interceptor adds `Authorization: Bearer <token>` when an access token exists in client storage.
-- No backend token-validation mechanism or completed sign-in flow is implemented, so Bearer authentication is currently a client-side scaffold rather than a verified end-to-end contract.
-- CORS applies to `/api/**`, allows one configured frontend origin, allows credentials, and currently permits `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, and `OPTIONS` with `Authorization`, `Content-Type`, and `Accept` request headers.
-- The configured CORS origin defaults to `http://localhost:4200` and can be overridden with `FRONTEND_URL`.
+- Security is stateless. Health, CSRF bootstrap and registration/login/refresh are explicitly public; other requests require a validated JWT and active database session.
+- Unsafe operations require CSRF protection. A JavaScript-readable `XSRF-TOKEN` cookie pairs with `X-XSRF-TOKEN`.
+- The frontend attaches its memory-only access JWT only to relative `/api/` requests requiring it. Refresh credentials use an HttpOnly cookie scoped to `/api/auth`.
+- Credentialed CORS applies to `/api/**`, accepts explicit comma-separated `FRONTEND_URL` origins (default `http://localhost:4200`) and rejects wildcard origins. Allowed headers include `Authorization`, `Content-Type`, `Accept`, `X-XSRF-TOKEN` and `admin-register-key`.
+- See [authentication](authentication.md) for endpoint transport, cookie policy, expiry/rotation and browser restoration.
 
 ## To be defined
 
@@ -62,11 +61,11 @@ This endpoint confirms process responsiveness only. It does not currently verify
 | Request and response media types | JSON is verified for the health endpoint; general policy TBD |
 | Field naming and date/time formats | Health response uses lower camel-case fields and an `Instant`; general policy TBD |
 | Pagination, filtering, and sorting | TBD |
-| Validation contract | TBD |
-| Authentication transport | Frontend Bearer-token scaffold exists; backend validation contract TBD |
-| Authorization behavior | Health is public and other routes are marked authenticated; role and failure behavior TBD |
+| Validation contract | Authentication uses stable errors with inline `fieldErrors`; unknown properties/multiple roles fail |
+| Authentication transport | Memory Bearer JWT plus HttpOnly rotating refresh cookie; see authentication contract |
+| Authorization behavior | Database session and server-confirmed roles; feature-specific permissions remain TBD |
 | Idempotency | TBD |
-| Correlation or request identifiers | TBD |
+| Correlation or request identifiers | Error responses contain server-generated `requestId`, also returned as `X-Request-ID` |
 | Deprecation and compatibility policy | TBD |
 | API specification format | TBD; no OpenAPI specification is present |
 

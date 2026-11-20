@@ -4,9 +4,9 @@
 
 **Confirmed product model:** Customers use one of two separate account types: Tutor or Tutor Seeker.
 
-No user feature implementation or business rule is confirmed by this page.
+TUTOR-5 now implements local registration and authentication. See the [authentication contract](../api/authentication.md); live deployment and browser verification remain pending.
 
-**TUTOR-4 identity decision:** Application-managed authentication uses one shared `app_user` identity with one Java-defined role: `TUTOR`, `TUTOR_SEEKER`, or `ADMIN`. Customer profiles are separate and mutually exclusive; administrators use the shared identity without a customer profile. Normalized username and email are unique. These decisions are implemented as local migration structures; live deployment and authentication services remain pending. See [Database schema](../database/schema.md), which supersedes the identity-model TBDs below.
+**TUTOR-4 identity decision:** Application-managed authentication uses one shared `app_user` identity with one Java-defined role: `TUTOR`, `TUTOR_SEEKER`, or `ADMIN`. Customer profiles are separate and mutually exclusive; administrators use the shared identity without a customer profile. Normalized username and email are unique. TUTOR-5 consumes these structures without schema changes. See [Database schema](../database/schema.md), which supersedes the identity-model TBDs below.
 
 ## Known vocabulary
 
@@ -16,7 +16,7 @@ No user feature implementation or business rule is confirmed by this page.
 | Tutor | A customer account used by a tutor; tutor-specific data is covered in [Tutor](tutor.md) |
 | Student | A person who may register directly as a Tutor Seeker |
 | Parent | Not a distinct role or account type; a parent may use a Tutor Seeker account |
-| Administrator | Supporting platform actor; its identity model remains **TBD** |
+| Administrator | Shared identity with ADMIN role; API registration requires an externally configured provisioning key |
 
 Tutor and Tutor Seeker are separate, mutually exclusive account types. A customer account cannot hold both types. A student does not need to be attached to a parent account to register.
 
@@ -54,6 +54,7 @@ The account retains a history of tutor connections or relationships. A Tutor See
 - The primary sign-in credentials are username and password.
 - Registration requires an email address.
 - An email OTP must be verified before the account becomes active.
+- TUTOR-5 temporarily permits unverified sign-in only under the exclusive `local` backend profile. Registration leaves verification unset; email/OTP delivery and activation remain deferred. Non-local authentication still requires verification.
 - The activation OTP is used only for initial account activation.
 - Routine sign-in requires only username and password.
 - These credential rules apply to both Tutor and Tutor Seeker accounts.
@@ -109,12 +110,11 @@ Verification evidence, review criteria, rejection resubmission, suspension reaso
 
 ## To be defined
 
-- User identity model
-- Registration, verification, and account lifecycle
+- Email/OTP implementation and account lifecycle beyond the TUTOR-5 registration/login contract
 - Detailed permission model
 - Whether an account type can ever be changed
-- Administrator identity and access model
-- Password storage, normal session duration, broader OTP rate limits, and authorization rules
+- Administrator feature permissions beyond key-protected API provisioning
+- Broader OTP rate limits and feature-specific authorization rules
 - Privacy, consent, and data-retention requirements
 
 ## Related domains

@@ -6,7 +6,7 @@
 
 The repository uses a layered scaffold with Controller, Service, Repository, Entity, DTO, Mapper, Security, Exception, Config, and Util areas. Some of these areas are placeholders and must not be described as implemented behavior until corresponding source code exists.
 
-The backend is connected to Supabase PostgreSQL, and Spring Data JPA plus Flyway are configured. The presence of Repository and Entity areas does not mean the official MVP schema or persistence model has already been defined; that work belongs to the next planned schema ticket.
+Spring Data JPA and Flyway are configured for PostgreSQL. TUTOR-4 implements the persistence foundation; TUTOR-5 uses mapped JPA entities, Spring Data JPA repositories and JPA service transactions. Preserve user-before-session pessimistic lock ordering and explicitly refresh entities after locking to avoid stale persistence-context state. Database-generated normalization/audit fields are read-only mappings; shared user/profile/credential keys use `@MapsId`. Other feature repositories remain pending. See the [database](../database/schema.md) and [authentication](../api/authentication.md) contracts.
 
 ## Layer responsibilities
 
@@ -14,8 +14,8 @@ The backend is connected to Supabase PostgreSQL, and Spring Data JPA plus Flyway
 | --- | --- |
 | Controller | HTTP boundary |
 | Service | Application/service logic |
-| Repository | Repository concern; MVP persistence behavior awaits the official schema ticket |
-| Entity | Entity concern; official database mappings have not yet been defined |
+| Repository | Spring Data JPA queries/locks and aggregate persistence coordination |
+| Entity | JPA mappings of the existing private-schema tables, with enums persisted as strings |
 | DTO | Boundary data transfer |
 | Mapper | Representation mapping |
 | Security | Cross-cutting security concerns |

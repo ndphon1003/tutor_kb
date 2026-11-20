@@ -31,7 +31,7 @@ The current source tree contains `core`, `shared`, `layouts`, and `features` und
 
 ## Current implementation baseline
 
-The current implemented frontend is limited to:
+The frontend implements:
 
 - The root application and router configuration
 - Main and authentication layout shells
@@ -39,10 +39,10 @@ The current implemented frontend is limited to:
 - A home-page health check against `GET /api/health`
 - Core authentication and role guards
 - Authentication and 401 error interceptors
-- Browser-safe local-storage access
-- Signal-based authentication state scaffolding
+- Signals-based memory-only `AuthStore`, browser restoration, single-flight refresh and one-time recovery/replay
+- Registration/login forms, protected account page, Access Denied, manual restoration retry and logout controls
 
-The current `auth`, `jobs`, and `tutors` feature route files do not define feature routes. Other feature directories are empty or scaffolded. Their presence does not confirm feature implementation.
+The `auth` routes are implemented by TUTOR-5. `jobs` and `tutors` routes and other feature directories remain scaffolded.
 
 ## Feature locality
 
@@ -52,7 +52,7 @@ Feature-specific services, models, and state should remain inside their feature 
 
 - Angular server output is configured with an Express server entry point.
 - Client hydration is enabled through `provideClientHydration()`.
-- The current server-route configuration applies `RenderMode.Prerender` to `**`, so all currently defined routes are prerendered at build time.
+- `/account` uses `RenderMode.Client`; public/auth screens use prerendering. Authentication restoration runs in the browser after rendering (or on client navigation when a guard awaits it); it never loads credentials during prerendering.
 - The home-page backend health check runs only in the browser and is skipped during server rendering.
 - The long-term route-by-route SSR, prerendering, or client-rendering policy and deployment topology remain **TBD**.
 
@@ -70,8 +70,8 @@ Feature-specific services, models, and state should remain inside their feature 
 - The configured API base URL is `/api` in both development and production environment files.
 - Local development proxies `/api` to the backend.
 - The implemented health call uses `GET /api/health`.
-- The auth interceptor sends `Authorization: Bearer <token>` when a locally stored access token exists, and the error interceptor clears the client session on HTTP 401.
-- The complete authentication contract, other endpoint paths, payload formats, and general client error mapping remain **TBD**.
+- The auth interceptor sends a memory-only access JWT only to intended relative backend requests. Expired-token errors coordinate refresh; ordinary forbidden errors preserve authentication. Neither token is persisted in Web Storage.
+- See the [authentication contract](../api/authentication.md) and [errors](../api/error-handling.md) for payloads, recovery, cookie/XSRF integration and pending browser verification.
 
 ## To be defined
 

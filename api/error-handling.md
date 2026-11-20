@@ -2,31 +2,35 @@
 
 ## Status
 
-The general API error contract is **TBD**.
-
-No global exception handler, custom error envelope, stable application error code, or documented error-to-HTTP mapping is currently implemented in the backend source.
+TUTOR-5 implements a shared error envelope for controller exceptions, JWT/session validation, CSRF and rejected CORS requests in local source. Feature-specific errors beyond authentication remain **TBD**.
 
 ## Verified current frontend behavior
 
-- The frontend error interceptor clears its local authentication session when it receives HTTP `401`.
-- After that action, the interceptor rethrows the original error.
-- Other HTTP and network errors are rethrown without a shared display, recovery, or translation policy.
+- `ACCESS_TOKEN_EXPIRED` coordinates one refresh and at most one request replay. Authentication/bootstrap calls never recursively refresh.
+- Invalid refresh or expired/revoked sessions clear memory and redirect to Login. Transient restoration failure exposes manual retry.
+- Ordinary `403` does not clear authentication or refresh. Forms branch on stable codes, display field errors and preserve non-sensitive input.
+- `RATE_LIMITED` can display server-provided `retryAfterSeconds`; ambiguous network failures never automatically replay business writes.
 
-This is current client behavior only. It does not establish the backend authentication-failure response contract, and it does not guarantee that every unauthorized backend condition currently returns `401`.
+The envelope contains `code`, safe `message`, ISO `timestamp`, request `path`, server-generated `requestId`, and `fieldErrors` (an empty object when inapplicable). `X-Request-ID` repeats the identifier; errors use `Cache-Control: no-store`. Optional `retryAfterSeconds` is understood by Angular for future rate-limit responses.
+
+| HTTP | Stable codes |
+| --- | --- |
+| 400 | `VALIDATION_FAILED` |
+| 401 | `INVALID_CREDENTIALS`, `ACCESS_TOKEN_INVALID`, `ACCESS_TOKEN_EXPIRED`, `REFRESH_INVALID`, `SESSION_EXPIRED`, `SESSION_REVOKED` |
+| 403 | `FORBIDDEN`, `ADMIN_REGISTRATION_FORBIDDEN`, `CSRF_REJECTED` |
+| 409 | `IDENTITY_CONFLICT` |
+| 500 | `INTERNAL_ERROR` |
+| 503 | `SERVICE_UNAVAILABLE` |
+
+No new account lockout or rate-limit business rule is implemented. Error bodies exclude parser/database diagnostics, stack traces, passwords and tokens. Login failures are generic. Refresh failure never changes the refresh cookie. See [authentication](authentication.md).
 
 ## To be defined
 
-- Error response shape
-- Stable error identifiers or codes
-- HTTP status-code mapping
-- Validation-error representation
-- Authentication and authorization failures
-- Not-found and conflict behavior
-- Unexpected server-error behavior
-- Safe client-facing messages
-- Logging and correlation identifiers
+- Feature-specific error codes and not-found semantics beyond authentication
+- Infrastructure rate-limit policy and producers of 429 responses
+- Application-wide error reporting and observability beyond the shared request identifier
 - Localization
-- Frontend display and recovery behavior
+- Recovery behavior for future feature operations
 
 ## Documentation requirements
 

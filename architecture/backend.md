@@ -6,25 +6,27 @@
 
 The Maven Wrapper is configured to use Maven 3.10.0. Versions recorded here describe the current source baseline; the version-upgrade policy remains **TBD**.
 
-**Database status:** **Connected; official schema pending.** The backend is configured to connect to Supabase PostgreSQL and uses Spring Data JPA, the PostgreSQL driver, and Flyway. The official application schema and MVP persistence model have not yet been defined or implemented.
+**Database status:** The TUTOR-4 foundation is implemented in source and tested on isolated PostgreSQL 17. Live Supabase migration state is not verified. Authentication persistence uses JPA entities, Spring Data JPA repositories and Hibernate, with the PostgreSQL driver and Flyway.
 
 ## Repository
 
-**TUTOR-4 update:** Four local Flyway migrations, backend enum definitions and real PostgreSQL verification tests now implement the persistence foundation. Live Supabase deployment and feature services remain pending. This update supersedes the older schema-pending baseline descriptions on this page; see [Database schema](../database/schema.md) for the migration chain, permissions and remaining responsibilities.
+**TUTOR-4/TUTOR-5 update:** Four local Flyway migrations and backend enums establish persistence. Authentication services now reuse that foundation; other feature services and live deployment remain pending. See [Database schema](../database/schema.md) and [authentication](../api/authentication.md).
 
 `tutor-backend`
 
 ## Current implementation baseline
 
-The current implemented backend code is limited to:
+The backend now implements:
 
 - The Spring Boot application entry point
 - `GET /api/health` and its response DTO
 - Stateless Spring Security and CORS configuration
 - Supabase PostgreSQL datasource configuration
 - Spring Data JPA and Flyway configuration
+- TUTOR-4 persistence foundation and TUTOR-5 transactional authentication using JPA entities and Spring Data JPA repositories
+- RSA JWT validation, rotating hashed refresh credentials, session revocation, CSRF and shared security/application errors
 
-Service, Repository, Entity, Mapper, Exception, Security, and Util package areas are currently scaffolding or placeholders unless source code added by a later ticket proves otherwise.
+Authentication occupies Controller, Service, Repository, Entity, DTO, Exception, Security and Config. Service transactions use JPA. Spring Data queries and explicit refreshes acquire pessimistic user locks before session locks and reload managed state after lock acquisition. Aggregate creation uses `EntityManager.persist`; session rotation uses dirty checking and revocation uses JPQL. Other feature areas remain scaffolding. See [authentication](../api/authentication.md) for the local contract and pending deployment/browser checks.
 
 ## Scaffolded logical structure
 
@@ -47,12 +49,12 @@ The diagram expresses the intended layered organization represented by the scaff
 | --- | --- |
 | Controller | HTTP boundary |
 | Service | Application/service logic |
-| Repository | Repository layer; MVP persistence behavior awaits the official schema ticket |
-| Entity | Entity layer; official database mappings have not yet been defined |
+| Repository | Spring Data JPA queries/locks, JPQL revocation and aggregate persistence coordination |
+| Entity | Private-schema JPA mappings with shared profile/credential keys and string-valued enums |
 | DTO | Boundary data-transfer objects |
 | Mapper | Conversion between representations |
-| Security | Security concerns; detailed rules are **TBD** |
-| Exception | Exception concerns; response contract is **TBD** |
+| Security | JWT/session checks, cookie/CSRF policy and server-confirmed roles; feature permissions remain TBD |
+| Exception | Shared API/security errors and controlled identity conflicts |
 | Config | Application configuration |
 | Util | Shared utilities |
 
@@ -61,8 +63,7 @@ The diagram expresses the intended layered organization represented by the scaff
 - Accepts REST/HTTP communication from the Angular frontend.
 - Connects to Supabase PostgreSQL through configurable datasource credentials.
 - Uses Flyway as the configured database-migration mechanism.
-- The official MVP schema, application entities, repositories, relationships, constraints, and migrations will be defined and created through the next planned development ticket after the current KB grooming is complete.
-- After that ticket is completed and verified, update the database and backend documentation with the implemented state.
+- Source-controlled migrations define the persistence foundation. Later feature work extends it through new migrations when needed.
 
 ## To be defined
 
